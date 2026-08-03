@@ -1,171 +1,124 @@
-import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Navbar from './Navbar'
-import HabitCard from './HabitCard'
+import React, { useState } from 'react';
 
-const defaultHabits = [
-  { id: 1, name: 'Drink Water 💧', isDone: false },
-  { id: 2, name: 'Read 20 mins 📚', isDone: false },
-  { id: 3, name: 'Exercise 🏃', isDone: false },
-]
+export default function App() {
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [age, setAge] = useState('');
+  const [result, setResult] = useState(null);
 
-function Dashboard({ habits, toggleHabit }) {
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {habits.map((habit) => (
-          <HabitCard
-            key={habit.id}
-            name={habit.name}
-            isDone={habit.isDone}
-            onToggle={() => toggleHabit(habit.id)}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function AllHabits({ habits, addHabit, deleteHabit }) {
-  const [newName, setNewName] = useState('')
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (newName.trim() === '') return
-    addHabit(newName)
-    setNewName('')
-  }
-
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-white mb-6">All Habits</h1>
-
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
-        <input
-          type="text"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          placeholder="Enter new habit..."
-          className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
-        />
-        <button
-          type="submit"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-        >
-          Add
-        </button>
-      </form>
-
-      <ul className="space-y-3">
-        {habits.map((habit) => (
-          <li
-            key={habit.id}
-            className="flex justify-between items-center bg-gray-800 px-4 py-3 rounded-lg"
-          >
-            <span className="text-white">{habit.name}</span>
-            <button
-              onClick={() => deleteHabit(habit.id)}
-              className="text-red-400 hover:text-red-300 transition"
-            >
-              🗑️ Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function Statistics({ habits }) {
-  const total = habits.length
-  const completed = habits.filter((h) => h.isDone).length
-  const percentage = total === 0 ? 0 : Math.round((completed / total) * 100)
-
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-white mb-6">Statistics</h1>
-
-      <div className="bg-gray-800 rounded-xl p-6 max-w-md">
-        <div className="flex justify-between text-white mb-2">
-          <span>Total Habits</span>
-          <span className="font-bold">{total}</span>
-        </div>
-        <div className="flex justify-between text-white mb-4">
-          <span>Completed Today</span>
-          <span className="font-bold text-green-400">{completed}</span>
-        </div>
-
-        <div className="w-full bg-gray-700 rounded-full h-4 mb-2">
-          <div
-            className="bg-green-500 h-4 rounded-full transition-all duration-500"
-            style={{ width: `${percentage}%` }}
-          ></div>
-        </div>
-        <p className="text-gray-300 text-sm text-center">
-          {percentage}% Completed
-        </p>
-      </div>
-    </div>
-  )
-}
-
-function App() {
-  const [habits, setHabits] = useState(() => {
-    const saved = localStorage.getItem('habits')
-    return saved ? JSON.parse(saved) : defaultHabits
-  })
-
-  useEffect(() => {
-    localStorage.setItem('habits', JSON.stringify(habits))
-  }, [habits])
-
-  function toggleHabit(id) {
-    setHabits(
-      habits.map((habit) =>
-        habit.id === id ? { ...habit, isDone: !habit.isDone } : habit
-      )
-    )
-  }
-
-  function addHabit(name) {
-    const newHabit = {
-      id: Date.now(),
-      name,
-      isDone: false,
+  const calculateBMI = (e) => {
+    e.preventDefault();
+    if (weight && height && age) {
+      const hMeters = height / 100;
+      const bmi = (weight / (hMeters * hMeters)).toFixed(1);
+      const calories = Math.round(10 * weight + 6.25 * height - 5 * age + 5);
+      setResult({ bmi, calories });
     }
-    setHabits([...habits, newHabit])
-  }
-
-  function deleteHabit(id) {
-    setHabits(habits.filter((habit) => habit.id !== id))
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <Navbar />
-      <Routes>
-        <Route
-          path="/"
-          element={<Dashboard habits={habits} toggleHabit={toggleHabit} />}
-        />
-        <Route
-          path="/habits"
-          element={
-            <AllHabits
-              habits={habits}
-              addHabit={addHabit}
-              deleteHabit={deleteHabit}
-            />
-          }
-        />
-        <Route
-          path="/statistics"
-          element={<Statistics habits={habits} />}
-        />
-      </Routes>
-    </div>
-  )
-}
+    <div>
+      {/* 1. النافبار */}
+      <nav className="navbar">
+        <div className="logo">TITANS <span>GYM</span></div>
+        <ul className="nav-links">
+          <li><a href="#home">الرئيسية</a></li>
+          <li><a href="#services">خدماتنا</a></li>
+          <li><a href="#calculator">الحاسبة</a></li>
+          <li><a href="#pricing">الاشتراكات</a></li>
+        </ul>
+      </nav>
 
-export default App
+      {/* 2. الهيرو (صورة رئيسية خلفية + نص مميز) */}
+      <section className="hero" id="home">
+        <h1>صمم جسمك المثالي مع <span>TITANS</span></h1>
+        <p>أفضل الأجهزة الرياضية والمدربين المحترفين في مكان واحد لمساعدتك على تحقيق هدفك.</p>
+        <button className="btn-primary">ابدأ رحلتك الآن 🚀</button>
+      </section>
+
+      {/* 3. كروت صور خدمات الجيم */}
+      <h2 className="section-title" id="services">أقسام الجيم</h2>
+      <div className="grid-container">
+        
+        <div className="card">
+          <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600" alt="كمال اجسام" />
+          <div className="card-content">
+            <h3 className="card-title">صالة الحديد وكمال الأجسام</h3>
+            <p className="card-desc">أجهزة حديثة ومتنوعة لجميع عضلات الجسم مع أوزان حرة تناسب جميع المستويات.</p>
+          </div>
+        </div>
+
+        <div className="card">
+          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600" alt="لياقة وفيتنس" />
+          <div className="card-content">
+            <h3 className="card-title">تمارين اللياقة والكارديو</h3>
+            <p className="card-desc">منطقة مخصصة لأجهزة السير والـ Elliptical وحرق الدهون بأعلى كفاءة.</p>
+          </div>
+        </div>
+
+        <div className="card">
+          <img src="https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?q=80&w=600" alt="تدريب شخصي" />
+          <div className="card-content">
+            <h3 className="card-title">التدريب الشخصي (PT)</h3>
+            <p className="card-desc">مدرب خاص يتابع خطتك التمرينية والتغذية خطوة بخطوة للوصول للهدف بسرعة.</p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* 4. حاسبة السعرات */}
+      <section className="calc-section" id="calculator">
+        <h2 className="section-title" style={{ margin: '0 0 30px' }}>حاسبة اللياقة والسعرات 🧮</h2>
+        <div className="calc-box">
+          <form onSubmit={calculateBMI}>
+            <div className="inputs-grid">
+              <input type="number" placeholder="الوزن (كجم)" value={weight} onChange={(e) => setWeight(e.target.value)} className="input-field" required />
+              <input type="number" placeholder="الطول (سم)" value={height} onChange={(e) => setHeight(e.target.value)} className="input-field" required />
+              <input type="number" placeholder="العمر" value={age} onChange={(e) => setAge(e.target.value)} className="input-field" required />
+            </div>
+            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>احسب الآن</button>
+          </form>
+
+          {result && (
+            <div style={{ marginTop: '25px', padding: '20px', background: '#0b0b0d', borderRadius: '15px', textAlign: 'center' }}>
+              <p style={{ fontSize: '18px', color: '#ff3b00', fontWeight: 'bold' }}>مؤشر كتلة الجسم (BMI): {result.bmi}</p>
+              <p style={{ fontSize: '16px', color: '#fff', marginTop: '8px' }}>احتياجك اليومي للحفاظ على الوزن: <strong>{result.calories} سعرة حرارية</strong></p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 5. خطط الأسعار */}
+      <h2 className="section-title" id="pricing">اشتراكات الجيم</h2>
+      <div className="grid-container" style={{ marginBottom: '80px' }}>
+        
+        <div className="pricing-card">
+          <h3>اشتراك شهر</h3>
+          <div className="price">500 <span style={{ fontSize: '14px', color: '#aaa' }}>ج.م</span></div>
+          <p style={{ color: '#aaa', lineHeight: '2' }}>• دخول مفتوح للجيم<br/>• حصة متابعة مع مدرب<br/>• دولاب خاص</p>
+          <button className="btn-primary" style={{ width: '100%', marginTop: '20px' }}>اشترك الآن</button>
+        </div>
+
+        <div className="pricing-card popular">
+          <span className="badge">الأكثر طلباً 🔥</span>
+          <h3>اشتراك 3 شهور</h3>
+          <div className="price">1200 <span style={{ fontSize: '14px', color: '#aaa' }}>ج.م</span></div>
+          <p style={{ color: '#aaa', lineHeight: '2' }}>• كافة مميزات الشهر<br/>• نظام غذائي مخصص<br/>• قياس InBody شهرياً</p>
+          <button className="btn-primary" style={{ width: '100%', marginTop: '20px' }}>اشترك الآن</button>
+        </div>
+
+        <div className="pricing-card">
+          <h3>اشتراك سنوي</h3>
+          <div className="price">3800 <span style={{ fontSize: '14px', color: '#aaa' }}>ج.م</span></div>
+          <p style={{ color: '#aaa', lineHeight: '2' }}>• دخول 24/7 طوال السنة<br/>• كابتن خاص لمدة شهر<br/>• خدمة الساونا مجاناً</p>
+          <button className="btn-primary" style={{ width: '100%', marginTop: '20px' }}>اشترك الآن</button>
+        </div>
+
+      </div>
+
+      <footer style={{ textAlign: 'center', padding: '25px', borderTop: '1px solid #222', color: '#666', fontSize: '14px' }}>
+        © 2026 TITANS GYM. جميع الحقوق محفوظة.
+      </footer>
+    </div>
+  );
+}

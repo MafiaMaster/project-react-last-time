@@ -1,57 +1,20 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import React from 'react';
+import { Dumbbell } from 'lucide-react';
 
-function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const linkClass = ({ isActive }) =>
-    `block px-4 py-2 rounded-lg transition ${
-      isActive ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'
-    }`
-
+export default function Navbar() {
   return (
-    <nav className="bg-gray-800 px-6 py-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-white font-bold text-xl">Habit Tracker 🚀</h2>
-
-        {/* زرار الهامبرجر - يظهر بس على الموبايل */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="text-white sm:hidden text-2xl"
-        >
-          ☰
-        </button>
-
-        {/* اللينكات - تظهر جنب بعض على الشاشات الكبيرة */}
-        <div className="hidden sm:flex gap-3">
-          <NavLink to="/" end className={linkClass}>
-            Dashboard
-          </NavLink>
-          <NavLink to="/habits" className={linkClass}>
-            Habits
-          </NavLink>
-          <NavLink to="/statistics" className={linkClass}>
-            Statistics
-          </NavLink>
-        </div>
+    <nav className="flex justify-between items-center px-6 py-4 bg-neutral-900 border-b border-neutral-800 sticky top-0 z-50 dir-rtl" dir="rtl">
+      <div className="flex items-center gap-2">
+        <Dumbbell className="w-8 h-8 text-orange-600" />
+        <h1 className="text-2xl font-black tracking-wider text-white">
+          TITANS <span className="text-orange-600">GYM</span>
+        </h1>
       </div>
-
-      {/* قائمة الموبايل - تظهر بس لما تدوس على الهامبرجر */}
-      {isOpen && (
-        <div className="flex flex-col gap-2 mt-4 sm:hidden">
-          <NavLink to="/" end className={linkClass} onClick={() => setIsOpen(false)}>
-            Dashboard
-          </NavLink>
-          <NavLink to="/habits" className={linkClass} onClick={() => setIsOpen(false)}>
-            Habits
-          </NavLink>
-          <NavLink to="/statistics" className={linkClass} onClick={() => setIsOpen(false)}>
-            Statistics
-          </NavLink>
-        </div>
-      )}
+      <ul className="flex gap-6 font-medium text-sm sm:text-base text-white">
+        <li className="hover:text-orange-600 cursor-pointer transition-colors">الرئيسية</li>
+        <li className="hover:text-orange-600 cursor-pointer transition-colors">الحاسبة</li>
+        <li className="hover:text-orange-600 cursor-pointer transition-colors">الاشتراكات</li>
+      </ul>
     </nav>
-  )
+  );
 }
-
-export default Navbar
